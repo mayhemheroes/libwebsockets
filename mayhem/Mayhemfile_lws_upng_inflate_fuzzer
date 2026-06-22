@@ -1,0 +1,8 @@
+project: libwebsockets
+target: lws_upng_inflate_fuzzer
+testsuite:
+  - file:///mayhem/mayhem/testsuite/lws_upng_inflate_fuzzer
+cmds:
+  - cmd: /mayhem/lws_upng_inflate_fuzzer
+    libfuzzer: true
+    dictionary: /mayhem/mayhem/lws_upng_inflate_fuzzer.dict
