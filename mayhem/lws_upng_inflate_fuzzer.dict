@@ -1,0 +1,31 @@
+# libFuzzer dictionary for lws_upng_inflate_fuzzer (libwebsockets gzip/DEFLATE inflator).
+# The harness parses a gzip stream: a 10-byte gzip header (magic 1f 8b, method 08=deflate, flags,
+# mtime, XFL, OS) followed by DEFLATE blocks. These tokens steer the fuzzer past the header/format
+# checks in lib/misc/upng-gzip.c so it reaches the huffman/LZ77 decode paths.
+
+# gzip magic + deflate method, no flags, common header prefixes
+gzip_magic="\x1f\x8b"
+gzip_hdr_min="\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03"
+gzip_hdr_fname="\x1f\x8b\x08\x08\x00\x00\x00\x00\x00\x03"
+gzip_hdr_fextra="\x1f\x8b\x08\x04\x00\x00\x00\x00\x00\x03"
+gzip_hdr_fhcrc="\x1f\x8b\x08\x02\x00\x00\x00\x00\x00\x03"
+
+# gzip flag bytes (FTEXT/FHCRC/FEXTRA/FNAME/FCOMMENT)
+flag_ftext="\x01"
+flag_fhcrc="\x02"
+flag_fextra="\x04"
+flag_fname="\x08"
+flag_fcomment="\x10"
+
+# DEFLATE stored (uncompressed) block: BFINAL=1,BTYPE=00 then LEN/NLEN
+deflate_stored_final="\x01\x00\x00\xff\xff"
+deflate_stored="\x00"
+
+# DEFLATE fixed-huffman final empty block (BFINAL=1,BTYPE=01) end-of-block marker
+deflate_fixed_final="\x03\x00"
+
+# DEFLATE dynamic-huffman block header start (BTYPE=10)
+deflate_dynamic="\x05"
+
+# trailer: CRC32 (4 bytes) + ISIZE (4 bytes) zero placeholders
+gzip_trailer="\x00\x00\x00\x00\x00\x00\x00\x00"
